@@ -91,7 +91,7 @@ class MainMenu :
                         self.menu.done = True
                     if self.bouton_info.text_rect.collidepoint(x, y): # Bouton REGLES/ASTUCE
                         Sound(self.main, 'Click.wav', 0.05, False)
-                        self.menu.menu_actif = Tips(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
+                        self.menu.menu_actif = Tips(self.screen, self.DISPLAY_W, self.DISPLAY_H, self, self.main)
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:
                     if self.b_select == 0: # Bouton JOUER
@@ -105,7 +105,7 @@ class MainMenu :
                         self.menu.done = True
                     if self.b_select == -1: # Bouton REGLES/ASTUCE
                         Sound(self.main, 'Click.wav', 0.05, False)
-                        self.menu.menu_actif = Tips(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
+                        self.menu.menu_actif = Tips(self.screen, self.DISPLAY_W, self.DISPLAY_H, self, self.main)
             elif event.type == pygame.JOYHATMOTION:
                 for i in range(len(self.liste_bouton)):
                     if self.liste_bouton[i].select:
@@ -469,11 +469,12 @@ class AudioOptionMenu:
             c.draw()
 
 class Tips:
-    def __init__(self, screen, w, h, mainMenu):
+    def __init__(self, screen, w, h, mainMenu, main):
         self.screen = screen
         self.DISPLAY_W = w
         self.DISPLAY_H = h
         self.mainMenu = mainMenu
+        self.main = main
 
         self.bouton_retour = Bouton(self.screen, self.DISPLAY_W//2, 565, "RETOUR", 40)
         self.img = pygame.image.load("images/regle.png").convert_alpha()
