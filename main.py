@@ -11,7 +11,12 @@ class Main:
     def __init__(self):
         # Initialisation
         pygame.init()
-        pygame.mixer.init()
+        self.mixer_init = True
+        try:
+            pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=4096)
+        except pygame.error:
+            print("Could not initialize mixer, continuing without sound.")
+            self.mixer_init = False
         pygame.font.init()
 
         # Création fenêtre

@@ -9,10 +9,11 @@ from piece import Piece
 from end_part import *
 
 class World:
-    def __init__(self, screen, game, width):
+    def __init__(self, screen, game, width, main):
         self.screen = screen
         self.game = game
         self.worldSize = width
+        self.main = main
 
         self.liste_mob = []
         self.liste_pu = []
@@ -74,7 +75,7 @@ class World:
         if case == "mb" : # mystery block
             y = 30 * i
             x = 30 * j + 900*k
-            self.decor.append(MysteryBlock(self.screen, self.game, x, y))
+            self.decor.append(MysteryBlock(self.screen, self.game, x, y, self.main))
         if case == "st" : # stairs block
             y = 30 * i
             x = 30 * j + 900*k

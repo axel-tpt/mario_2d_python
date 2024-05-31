@@ -6,12 +6,13 @@ from point import Point
 from timer import Timer
 
 class Mario:
-    def __init__(self, screen, w, h, game):
+    def __init__(self, screen, w, h, game, main):
         # Info fenêtre
         self.screen = screen
         self.DISPLAY_W = w
         self.DISPLAY_H = h
         self.game = game
+        self.main = main
         
         # ------ paramètre image ------
         # sprite sur le poteau
@@ -146,13 +147,13 @@ class Mario:
                     self.img_actif = self.img_jump_0_right
                 else:
                     self.img_actif = self.img_jump_0_left
-                Sound('Mario Jump Small.wav', 0.05*self.game.menu.volume, False)
+                Sound(self.main, 'Mario Jump Small.wav', 0.05*self.game.menu.volume, False)
             else :
                 if self.img_actif == self.img_1_right:
                     self.img_actif = self.img_jump_1_right
                 else:
                     self.img_actif = self.img_jump_1_left
-                Sound('Mario Jump Super.wav', 0.05*self.game.menu.volume, False)
+                Sound(self.main, 'Mario Jump Super.wav', 0.05*self.game.menu.volume, False)
 
     # ------ collision par entité ------
     def collision_sol(self):
@@ -203,7 +204,7 @@ class Mario:
                         self.dy = elt.rect.top - self.rect.bottom
                         self.speed = 0
                     if self.speed < 0 : # par le bas
-                        Sound("Bump.wav", 0.05*self.game.menu.volume, False)
+                        Sound(self.main, "Bump.wav", 0.05*self.game.menu.volume, False)
                         self.dy = elt.rect.bottom - self.rect.top
                         self.speed = 0
                         if elt.type == "mystery" :
@@ -231,7 +232,7 @@ class Mario:
         for mob in self.game.liste_mob :
             if mob.rect.colliderect(self.rect.x, self.rect.y + self.dy, self.rect.width, self.rect.height):
                 if self.hitDelay.done() and not self.collision_decor_y():
-                    Sound('Stomp.wav', 0.05*self.game.menu.volume, False)
+                    Sound(self.main, 'Stomp.wav', 0.05*self.game.menu.volume, False)
                     self.game.liste_mob.remove(mob)
                     self.game.score += 100
                     self.game.point.append(Point(self.screen, 100, mob.rect.x + mob.rect.width, mob.rect.y))
@@ -239,14 +240,14 @@ class Mario:
     def collision_piece(self):
         for piece in self.game.liste_piece :
             if piece.rect.colliderect(self.rect.x, self.rect.y, self.rect.width, self.rect.height):
-                Sound('Piece.wav', 0.05*self.game.menu.volume, False)
+                Sound(self.main, 'Piece.wav', 0.05*self.game.menu.volume, False)
                 self.game.liste_piece.remove(piece)
                 self.game.nb_piece += 1
 
     def collision_pu(self):
         for pu in self.game.liste_pu :
             if pu.rect.colliderect(self.rect.x, self.rect.y, self.rect.width, self.rect.height):
-                Sound('Power Up.wav', 0.05*self.game.menu.volume, False)
+                Sound(self.main, 'Power Up.wav', 0.05*self.game.menu.volume, False)
                 self.game.liste_pu.remove(pu)
                 self.game.score += 1000
                 self.game.point.append(Point(self.screen, 1000, pu.rect.x + pu.rect.width, pu.rect.y))
@@ -260,11 +261,11 @@ class Mario:
                     self.game.menu.music.pause()
                     self.game.end_anim = True
                     if self.game.menu.music.state == 1 :
-                        Sound("End Level.wav", 0.08, False)
+                        Sound(self.main, "End Level.wav", 0.08, False)
                 if elt.barre.rect.colliderect(self.rect.x + self.dx, self.rect.y, self.rect.width, self.rect.height):
                     self.game.menu.music.pause()
                     if self.game.menu.music.state == 1 :
-                        Sound("End Level.wav", 0.08, False)
+                        Sound(self.main, "End Level.wav", 0.08, False)
                     if self.size == 0 :
                         self.img_actif = self.img_poteau_0
                     else:

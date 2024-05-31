@@ -11,17 +11,18 @@ from point import Point
 from json_reader import *
 
 class Game:
-    def __init__(self, screen, w, h, menu):
+    def __init__(self, screen, w, h, menu, main):
         # Info fenêtre
         self.screen = screen
         self.DISPLAY_W = w
         self.DISPLAY_H = h
         self.menu = menu
         self.controle = self.menu.controle
+        self.main = main
 
         # Création monde
         self.worldSize = 3
-        world = World(screen, self, self.worldSize)
+        world = World(screen, self, self.worldSize, self.main)
         world.readCSV()
         self.liste_mob, self.liste_pu, self.liste_piece, self.decor, self.sol, self.end_level = world.content() # récupère les éléments du csv pour le jeu
         self.l_controle = [ # liste des controles en jeu
@@ -33,7 +34,7 @@ class Game:
 
         # Initialisation acteurs
         self.bg = Background(screen, w, h, self)
-        self.mario = Mario(screen, w, h, self)
+        self.mario = Mario(screen, w, h, self, self.main)
         self.dist_affichage = 480
         self.borne_gauche = self.mario.rect.x - self.dist_affichage
         self.borne_droite = self.mario.rect.x + self.dist_affichage
@@ -62,7 +63,7 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         if not self.end_game:
-                            Sound('Pause.wav', 0.05*self.menu.volume, False)
+                            Sound(self.main, 'Pause.wav', 0.05*self.menu.volume, False)
                             self.play = False
                     if event.key == self.controle["jump"]:
                         self.mario.jump()
@@ -79,7 +80,7 @@ class Game:
                         self.mario.jump()
                     if event.button == 7:
                         if not self.end_game:
-                            Sound('Pause.wav', 0.05*self.menu.volume, False)
+                            Sound(self.main, 'Pause.wav', 0.05*self.menu.volume, False)
                             self.play = False
 
         if not self.play and not self.end_anim and not self.end_game:
@@ -193,7 +194,7 @@ class Game:
         if self.nb_piece == 0 and (self.ATH.duration - self.ATH.time_w) == 0 and self.marioInCastle:
             if self.score > getBestScore():
                 newBestScore(self.score)
-            self.endMenu = EndMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
+            self.endMenu = EndMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self, self.main)
             self.end_anim = False
             self.end_game = True
             self.menu.music.changeState()
@@ -216,7 +217,7 @@ class Game:
         self.draw_mario = False
         self.play = False
         self.score += 100*self.nb_piece
-        self.endMenu = EndMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
+        self.endMenu = EndMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self, self.main)
         self.end_game = True
 
 
@@ -326,21 +327,21 @@ class PauseMenu :
                 if pygame.mouse.get_pressed()[0]:
                     x, y = pygame.mouse.get_pos()
                     if self.liste_bouton[0].text_rect.collidepoint(x, y): # bouton reprendre
-                        Sound('Click.wav', 0.05*self.game.menu.volume, False)
+                        Sound(self.main, 'Click.wav', 0.05*self.game.menu.volume, False)
                         self.game.play = True
                     if self.liste_bouton[1].text_rect.collidepoint(x, y): # bouton pour retourner au menu
-                        Sound('Click.wav', 0.05*self.game.menu.volume, False)
+                        Sound(self.main, 'Click.wav', 0.05*self.game.menu.volume, False)
                         self.game.menu.main.actif = self.game.menu
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 7 or event.button == 1:
-                    Sound('Click.wav', 0.05*self.game.menu.volume, False)
+                    Sound(self.main, 'Click.wav', 0.05*self.game.menu.volume, False)
                     self.game.play = True
                 if event.button == 0:
                     if self.b_select == 0:
-                        Sound('Click.wav', 0.05*self.game.menu.volume, False)
+                        Sound(self.main, 'Click.wav', 0.05*self.game.menu.volume, False)
                         self.game.play = True
                     if self.b_select == 1:
-                        Sound('Click.wav', 0.05*self.game.menu.volume, False)
+                        Sound(self.main, 'Click.wav', 0.05*self.game.menu.volume, False)
                         self.game.menu.main.actif = self.game.menu
             elif event.type == pygame.JOYHATMOTION:
                 for i in range(len(self.liste_bouton)):
@@ -377,12 +378,13 @@ class PauseMenu :
             bouton.draw()
 
 class EndMenu:
-    def __init__(self, screen, w, h, game):
+    def __init__(self, screen, w, h, game, main):
         # Info fenêtre
         self.screen = screen
         self.DISPLAY_W = w
         self.DISPLAY_H = h
         self.game = game
+        self.main = main
 
         # Paramètre jeu
         self.done = False
@@ -409,7 +411,7 @@ class EndMenu:
                 if pygame.mouse.get_pressed()[0]:
                     x, y = pygame.mouse.get_pos()
                     if self.liste_bouton[0].text_rect.collidepoint(x, y):
-                        Sound('Click.wav', 0.05*self.game.menu.volume, False)
+                        Sound(self.main, 'Click.wav', 0.05*self.game.menu.volume, False)
                         self.game.menu.main.actif = self.game.menu
 
 

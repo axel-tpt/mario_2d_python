@@ -22,9 +22,10 @@ class Brick:
         self.screen.blit(self.img, (self.rect.x + cam, self.rect.y))
 
 class MysteryBlock:
-    def __init__(self, screen, game, x, y):
+    def __init__(self, screen, game, x, y, main):
         self.screen = screen
         self.game = game
+        self.main = main
 
         img = pygame.image.load('images/block/MysteryBlock.png').convert_alpha()
         img_empty = pygame.image.load('images/block/EmptyBlock.png').convert_alpha()
@@ -43,7 +44,7 @@ class MysteryBlock:
     def drop(self):
         if not self.empty :
             self.img_actif = self.img_empty
-            Sound('Power Up Appears.wav', 0.05, False)
+            Sound(self.main, 'Power Up Appears.wav', 0.05, False)
             self.game.liste_pu.append(superChampignon(self.screen, self.game, self.rect.x, self.rect.y - 30))
 
 

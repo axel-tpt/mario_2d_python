@@ -6,6 +6,8 @@ from sound import Sound
 from texte import *
 from json_reader import *
 
+
+
 class Menu :
     def __init__(self, screen, w, h, main):
         # Info fenêtre
@@ -17,7 +19,7 @@ class Menu :
 
         # Paramètre jeu
         self.done = False
-        self.music = Sound('Super Mario Bros Theme.wav', 0.05, True)
+        self.music = Sound(self.main, 'Super Mario Bros Theme.wav', 0.05, True)
         self.music.state = getSoundState()[0]
         if self.music.state == 0:
             self.music.pause()
@@ -25,8 +27,8 @@ class Menu :
 
 
         # Paramètres menu
-        self.menu_actif = MainMenu(screen, w, h, self)
-        # self.sound = Sound('Click.wav', 0.1)
+        self.menu_actif = MainMenu(screen, w, h, self, self.main)
+        # self.sound = Sound(main, 'Click.wav', 0.1)
 
         bg = pygame.image.load("images/background/BackgroundMario.png")
         mario = pygame.image.load("images/mario/BigMario.png").convert_alpha()
@@ -45,13 +47,14 @@ class Menu :
         self.menu_actif.draw()
 
 class MainMenu :
-    def __init__(self, screen, w, h, menu):
+    def __init__(self, screen, w, h, menu, main):
         # Info fenêtre / menu
         self.screen = screen
         self.DISPLAY_W = w
         self.DISPLAY_H = h
         self.menu = menu
-        self.optionMenu = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
+        self.main = main
+        self.optionMenu = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self, main)
 
         # Paramètres menu
         self.logo = pygame.image.load("images/logo.png")
@@ -78,30 +81,30 @@ class MainMenu :
                 if pygame.mouse.get_pressed()[0]:
                     x, y = pygame.mouse.get_pos()
                     if self.liste_bouton[0].text_rect.collidepoint(x, y): # Bouton JOUER
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.play()
                     if self.liste_bouton[1].text_rect.collidepoint(x, y): # Bouton OPTION
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.menu.menu_actif = self.optionMenu
                     if self.liste_bouton[2].text_rect.collidepoint(x, y): # Bouton Quitter
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.menu.done = True
                     if self.bouton_info.text_rect.collidepoint(x, y): # Bouton REGLES/ASTUCE
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.menu.menu_actif = Tips(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:
                     if self.b_select == 0: # Bouton JOUER
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.play()
                     if self.b_select == 1: # Bouton OPTION
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.menu.menu_actif = self.optionMenu
                     if self.b_select == 2: # Bouton Quitter
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.menu.done = True
                     if self.b_select == -1: # Bouton REGLES/ASTUCE
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.menu.menu_actif = Tips(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
             elif event.type == pygame.JOYHATMOTION:
                 for i in range(len(self.liste_bouton)):
@@ -147,15 +150,16 @@ class MainMenu :
         self.bouton_info.draw()
 
     def play(self):
-        self.game = Game(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.menu)
+        self.game = Game(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.menu, self.main)
         self.menu.main.actif = self.game
 
 class OptionMenu:
-    def __init__(self, screen, w, h, mainMenu):
+    def __init__(self, screen, w, h, mainMenu, main):
         self.screen = screen
         self.DISPLAY_W = w
         self.DISPLAY_H = h
         self.mainMenu = mainMenu
+        self.main = main
 
         self.done = False
         self.play = False
@@ -170,34 +174,34 @@ class OptionMenu:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE: # Reviens au menu principal en appuyant sur Esc
-                    Sound('Click.wav', 0.05, False)
+                    Sound(self.main, 'Click.wav', 0.05, False)
                     self.mainMenu.menu.menu_actif = MainMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.mainMenu.menu)
             elif event.type == pygame.MOUSEBUTTONDOWN :
                 if pygame.mouse.get_pressed()[0]:
                     x, y = pygame.mouse.get_pos()
                     if self.liste_bouton[0].text_rect.collidepoint(x, y): # Bouton COMMANDE
-                        Sound('Click.wav', 0.1)
-                        self.mainMenu.menu.menu_actif = CommandesOptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
+                        Sound(self.main, 'Click.wav', 0.1)
+                        self.mainMenu.menu.menu_actif = CommandesOptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self, self.main)
                     if self.liste_bouton[1].text_rect.collidepoint(x, y): # Bouton AUDIO
-                        Sound('Click.wav', 0.1)
-                        self.mainMenu.menu.menu_actif = AudioOptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
+                        Sound(self.main, 'Click.wav', 0.1)
+                        self.mainMenu.menu.menu_actif = AudioOptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self, self.main)
                     if self.liste_bouton[len(self.liste_bouton)-1].text_rect.collidepoint(x, y): # Bouton RETOUR
-                        Sound('Click.wav', 0.1)
-                        self.mainMenu.menu.menu_actif = MainMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.mainMenu.menu)
+                        Sound(self.main, 'Click.wav', 0.1)
+                        self.mainMenu.menu.menu_actif = MainMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.mainMenu.menu, self.main)
 
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:
                     if self.b_select == 0: # Bouton JOUER
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.mainMenu.menu.menu_actif = CommandesOptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
                     if self.b_select == 1: # Bouton OPTION
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.mainMenu.menu.menu_actif = AudioOptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self)
                     if self.b_select == 2: # Bouton Quitter
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.mainMenu.menu.menu_actif = MainMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.mainMenu.menu)
                 if event.button == 1:
-                    Sound('Click.wav', 0.05, False)
+                    Sound(self.main, 'Click.wav', 0.05, False)
                     self.mainMenu.menu.menu_actif = MainMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.mainMenu.menu)
             elif event.type == pygame.JOYHATMOTION:
                 for i in range(len(self.liste_bouton)):
@@ -234,12 +238,13 @@ class OptionMenu:
             bouton.draw()
 
 class CommandesOptionMenu:
-    def __init__(self, screen, w, h, optionMenu):
+    def __init__(self, screen, w, h, optionMenu, main):
         self.screen = screen
         self.DISPLAY_W = w
         self.DISPLAY_H = h
         self.optionMenu = optionMenu
         self.b_select = -1
+        self.main = main
 
         self.label_button = [
             "GAUCHE:",
@@ -273,38 +278,38 @@ class CommandesOptionMenu:
                             self.liste_bouton[i].newValue(touche[i], pygame.key.name(event.key))
                             self.optionMenu.mainMenu.menu.controle[touche[i]] = pygame.key.key_code(newValue(touche[i], pygame.key.name(event.key)))
                 if not select and event.key == pygame.K_ESCAPE : # Reviens au menu principal en appuyant sur Esc
-                    Sound('Click.wav', 0.05, False)
+                    Sound(self.main, 'Click.wav', 0.05, False)
                     self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu)
 
             elif event.type == pygame.MOUSEBUTTONDOWN :
                 if pygame.mouse.get_pressed()[0]:
                     x, y = pygame.mouse.get_pos()
                     if self.liste_bouton[0].text_rect.collidepoint(x, y): # Bouton left
-                        Sound('Click.wav', 0.1)
+                        Sound(self.main, 'Click.wav', 0.1)
                         self.liste_bouton[0].click(self.liste_bouton)
                     if self.liste_bouton[1].text_rect.collidepoint(x, y): # Bouton right
-                        Sound('Click.wav', 0.1)
+                        Sound(self.main, 'Click.wav', 0.1)
                         self.liste_bouton[1].click(self.liste_bouton)
                     if self.liste_bouton[2].text_rect.collidepoint(x, y): # Bouton jump
-                        Sound('Click.wav', 0.1)
+                        Sound(self.main, 'Click.wav', 0.1)
                         self.liste_bouton[2].click(self.liste_bouton)
                     if self.liste_bouton[len(self.liste_bouton)-1].text_rect.collidepoint(x, y):
-                        Sound('Click.wav', 0.1)
-                        self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu)
+                        Sound(self.main, 'Click.wav', 0.1)
+                        self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu, self.main)
             
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:
                     if self.b_select == 0:
-                        Sound('Click.wav', 0.1)
+                        Sound(self.main, 'Click.wav', 0.1)
                         self.liste_bouton[0].click(self.liste_bouton)
                     if self.b_select == 1:
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.liste_bouton[1].click(self.liste_bouton)
                     if self.b_select == 2:
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.liste_bouton[1].click(self.liste_bouton)
                     if self.b_select == 3:
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu)
                 if event.button == 1:
                     print(self.b_select)
@@ -312,7 +317,7 @@ class CommandesOptionMenu:
                         self.liste_bouton[self.b_select].v = self.liste_bouton[self.b_select].default_v
                         self.liste_bouton[self.b_select].state = "non"
                     else:
-                        Sound('Click.wav', 0.05, False)
+                        Sound(self.main, 'Click.wav', 0.05, False)
                         self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu)
             elif event.type == pygame.JOYHATMOTION:
                 for i in range(len(self.liste_bouton)):
@@ -350,7 +355,7 @@ class CommandesOptionMenu:
             bouton.draw()
 
 class AudioOptionMenu:
-    def __init__(self, screen, w, h, optionMenu):
+    def __init__(self, screen, w, h, optionMenu, main):
         self.screen = screen
         self.DISPLAY_W = w
         self.DISPLAY_H = h
@@ -362,6 +367,7 @@ class AudioOptionMenu:
             "RETOUR"
         ]
         self.b_select = None
+        self.main = main
 
         self.liste_bouton = []
         for i in range(len(self.label_button)) :
@@ -375,8 +381,8 @@ class AudioOptionMenu:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE :
-                    Sound('Click.wav', 0.05, False)
-                    self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu)
+                    Sound(self.main, 'Click.wav', 0.05, False)
+                    self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu, self.main)
 
             elif event.type == pygame.MOUSEBUTTONDOWN :
                 if pygame.mouse.get_pressed()[0]:
@@ -386,18 +392,18 @@ class AudioOptionMenu:
                         self.optionMenu.mainMenu.menu.music.changeState()
                         self.liste_checkBox[0].changeState()
                         newSoundState("music", self.liste_checkBox[0].state)
-                        Sound('Click.wav', 0.1)
+                        Sound(self.main, 'Click.wav', 0.1)
 
                     # bouton effets sonores
                     if self.liste_bouton[1].text_rect.collidepoint(x, y) or self.liste_checkBox[1].collision(x, y):
-                        Sound('Click.wav', 0.1)
+                        Sound(self.main, 'Click.wav', 0.1)
                         self.liste_checkBox[1].changeState()
                         newSoundState("effects", self.liste_checkBox[1].state)
                         self.optionMenu.mainMenu.menu.volume = self.liste_checkBox[1].state
                     # bouton revenir au menu option
                     if self.liste_bouton[len(self.liste_bouton)-1].text_rect.collidepoint(x, y):
-                        Sound('Click.wav', 0.1)
-                        self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu)
+                        Sound(self.main, 'Click.wav', 0.1)
+                        self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu, self.main)
            
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:
@@ -405,18 +411,18 @@ class AudioOptionMenu:
                         self.optionMenu.mainMenu.menu.music.changeState()
                         self.liste_checkBox[0].changeState()
                         newSoundState("music", self.liste_checkBox[0].state)
-                        Sound('Click.wav', 0.1)
+                        Sound(self.main, 'Click.wav', 0.1)
                     if self.b_select == 1:
-                        Sound('Click.wav', 0.1)
+                        Sound(self.main, 'Click.wav', 0.1)
                         self.liste_checkBox[1].changeState()
                         newSoundState("effects", self.liste_checkBox[1].state)
                         self.optionMenu.mainMenu.menu.volume = self.liste_checkBox[1].state
                     if self.b_select == 2:
-                        Sound('Click.wav', 0.1)
-                        self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu)
+                        Sound(self.main, 'Click.wav', 0.1)
+                        self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu, self.main)
                 if event.button == 1:
-                    Sound('Click.wav', 0.1)
-                    self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu)
+                    Sound(self.main, 'Click.wav', 0.1)
+                    self.optionMenu.mainMenu.menu.menu_actif = OptionMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.optionMenu.mainMenu, self.main)
 
             elif event.type == pygame.JOYHATMOTION:
                 for i in range(len(self.liste_bouton)):
@@ -479,13 +485,13 @@ class Tips:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    Sound('Click.wav', 0.05, False)
-                    self.mainMenu.menu.menu_actif = MainMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.mainMenu.menu)
+                    Sound(self.main, 'Click.wav', 0.05, False)
+                    self.mainMenu.menu.menu_actif = MainMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.mainMenu.menu, self.main)
             elif event.type == pygame.MOUSEBUTTONDOWN :
                 if pygame.mouse.get_pressed()[0]:
                     if self.bouton_retour.text_rect.collidepoint(pygame.mouse.get_pos()):
-                        Sound('Click.wav', 0.05, False)
-                        self.mainMenu.menu.menu_actif = MainMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.mainMenu.menu)
+                        Sound(self.main, 'Click.wav', 0.05, False)
+                        self.mainMenu.menu.menu_actif = MainMenu(self.screen, self.DISPLAY_W, self.DISPLAY_H, self.mainMenu.menu, self.main)
     
     # Changement de couleur du bouton à cause de la souris
     def update(self):
