@@ -1,0 +1,11 @@
+# --- Folder ---
+mario_2d/__pycache__
+mario_2d/module/__pycache__
+
+Mario_2D.egg-info
+dist
+build
+
+venv
+
+.vscode
