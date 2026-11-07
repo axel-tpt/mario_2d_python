@@ -1,0 +1,14 @@
+[project]
+name = "mario-2d"
+version = "1"
+description = "A simple Mario 2D game in Python"
+readme = "README.md"
+authors = [{ name = "Axel TREPOUT", email = "axel.trepout@outlook.com" }]
+requires-python = ">=3.10"
+dependencies = ["pygame==2.5.2"]
+
+[project.urls]
+Homepage = "https://github.com/axel-tpt/mario_2d_python.git"
+
+[tool.uv]
+package = false

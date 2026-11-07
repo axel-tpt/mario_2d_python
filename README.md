@@ -6,12 +6,12 @@
    git clone git@github.com:axel-tpt/mario_2d_python.git
    cd mario_2d_python
 
-3. Installez les dépendances :
+2. Installez [uv](https://docs.astral.sh/uv/) puis les dépendances :
    ```bash
-   pip install -e .
+   uv sync
    ```
 
-4. Lancez l'application :
+3. Lancez l'application (depuis la racine du projet) :
    ```bash
-   start
+   uv run python -m mario_2d.main
    ```
